@@ -71,63 +71,58 @@ Create a working directory and two sample files you will use throughout this lab
 
 ### Exercise 1.1 — Display file contents with `cat`
 
-Display the access log:
+1. Display the contents of `access.log` using `cat`.
+2. Display it again, this time with line numbers. Use `cat`'s `-n` flag.
+3. Count the lines using `wc -l`. You should see `20`.
+4. `wc` also accepts multiple filenames — count both `access.log` and `app.conf` in a single command.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 cat access.log
-```
-
-Now display it with line numbers using the `-n` flag:
-
-```bash
 cat -n access.log
-```
-
-Count the lines using `wc -l`:
-
-```bash
 wc -l access.log
-```
-
-You should see `20`. `wc` also accepts multiple filenames — count both files at once:
-
-```bash
 wc -l access.log app.conf
 ```
 
+</details>
+
 ### Exercise 1.2 — Count words, lines, and bytes
 
-Run `wc` on `app.conf` without any flags:
+1. Run `wc` on `app.conf` without any flags. The three numbers are **lines**, **words**, and **bytes**.
+2. Run `wc` three more times with the `-l`, `-w`, and `-c` flags to get each count separately.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 wc app.conf
+wc -l app.conf
+wc -w app.conf
+wc -c app.conf
 ```
 
-The three numbers are **lines**, **words**, and **bytes**. Try the individual flags to extract each:
-
-```bash
-wc -l app.conf    # lines only
-wc -w app.conf    # words only
-wc -c app.conf    # bytes only
-```
+</details>
 
 ### Exercise 1.3 — View the start and end of a file
 
-Print the first 5 lines of the access log:
+1. Print the first 5 lines of `access.log` using `head`.
+2. Print the last 3 lines using `tail`.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 head -5 access.log
-```
-
-Print the last 3 lines:
-
-```bash
 tail -3 access.log
 ```
 
+</details>
+
 ### Exercise 1.4 — Page through a file with `less`
 
-Open the access log with `less`:
+Open `access.log` with `less`:
 
 ```bash
 less access.log
@@ -148,55 +143,54 @@ Practice the following navigation:
 
 ### Exercise 2.1 — Basic search
 
-Find all log entries that resulted in a 404 status:
+1. Use `grep` to find all log entries with a `404` status code.
+2. Find all `GET` requests.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 grep "404" access.log
-```
-
-Find all GET requests:
-
-```bash
 grep "GET" access.log
 ```
 
-### Exercise 2.2 — Invert the match
+</details>
 
-Show every request that was *not* a GET:
+### Exercise 2.2 — Invert the match and count
+
+1. Use `grep` to show every request that was *not* a GET.
+2. Count how many non-GET requests there were using the `-c` flag.
+3. Count the successful requests. Use spaces around `200` (i.e. `" 200 "`) to prevent false matches against IP addresses or response sizes.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 grep -v "GET" access.log
-```
-
-Count how many non-GET requests there were using the `-c` flag:
-
-```bash
 grep -vc "GET" access.log
-```
-
-Now count the successful requests. Using spaces around `200` prevents false matches against IP addresses or response sizes:
-
-```bash
 grep -c " 200 " access.log
 ```
 
+</details>
+
 ### Exercise 2.3 — Line numbers and case-insensitive search
 
-Show line numbers alongside matches. Find all POST requests with their line numbers:
+1. Find all POST requests, showing the line number of each match.
+2. Search `app.conf` for the word "host", case-insensitively, so that `db_host`, `cache_host`, and any capitalised variants all match.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 grep -n "POST" access.log
-```
-
-Search `app.conf` for "host", case-insensitively (matching `db_host`, `cache_host`, etc.):
-
-```bash
 grep -i "host" app.conf
 ```
 
+</details>
+
 ### Exercise 2.4 — Search across multiple files
 
-Create a second config file:
+First, create a second config file:
 
 ```bash
 cat > nginx.conf << 'EOF'
@@ -210,41 +204,35 @@ server {
 EOF
 ```
 
-Search for `log` across all `.conf` files. `grep` will prefix each match with the filename:
+1. Search for the word `log` across all `.conf` files. `grep` will prefix each match with the filename.
+2. Show only the filenames (not the matching lines) that contain the word `host`.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 grep "log" *.conf
-```
-
-Show only the filenames that contain the word `host`:
-
-```bash
 grep -l "host" *.conf
 ```
 
+</details>
+
 ### Exercise 2.5 — Anchors
 
-Use `^` to match lines that start with `#` (comment lines) in `app.conf`:
+1. Find all comment lines in `app.conf` — lines that start with `#`. Use the `^` anchor.
+2. Find all lines that end with `false`. Use the `$` anchor.
+3. Find only the `db_` settings by anchoring the pattern to the start of the line.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 grep "^#" app.conf
-```
-
-Use `$` to find lines that end with `false`:
-
-```bash
 grep "false$" app.conf
-```
-
-Find only the `db_` settings by anchoring to the start of the line:
-
-```bash
 grep "^db_" app.conf
 ```
 
-<details>
-<summary>Expected output</summary>
-
+Expected output for step 3:
 ```
 db_host=localhost
 db_port=5432
@@ -257,7 +245,7 @@ db_password=changeme
 
 ### Exercise 2.6 — Match error responses with a regular expression
 
-Use `grep -E` (extended regex) to match all 4xx and 5xx error responses in the access log.
+Use `grep -E` (extended regex) to match all 4xx and 5xx error responses in the access log. The status code is the fourth space-separated field; use surrounding spaces in your pattern to avoid matching other numbers in the line.
 
 <details>
 <summary>Reveal Solution</summary>
@@ -273,7 +261,7 @@ Expected output:
 10.0.0.5 DELETE /user/42 403 64
 ```
 
-`[45]` matches either `4` or `5`; `[0-9]{2}` matches exactly two digits. The surrounding spaces ensure we only match the status code field, not other numbers in the line.
+`[45]` matches either `4` or `5`; `[0-9]{2}` matches exactly two digits.
 
 </details>
 
@@ -283,89 +271,114 @@ Expected output:
 
 ### Exercise 3.1 — Extract a column with `cut`
 
-The access log is space-separated. Extract just the IP addresses (field 1):
+The access log is space-separated. Use `cut` to:
+
+1. Extract just the IP addresses (field 1).
+2. Extract the HTTP method (field 2).
+3. Extract both the method and the path together (fields 2 and 3).
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 cut -d' ' -f1 access.log
-```
-
-Extract the HTTP method (field 2):
-
-```bash
 cut -d' ' -f2 access.log
-```
-
-Extract both the method and the path (fields 2 and 3 together):
-
-```bash
 cut -d' ' -f2,3 access.log
 ```
+
+</details>
 
 ### Exercise 3.2 — Extract from a colon-delimited file
 
 `/etc/passwd` uses `:` as its delimiter. Its fields are: username, password placeholder, UID, GID, comment, home directory, and login shell.
 
-List all usernames (field 1):
+1. List all usernames.
+2. List usernames and their login shells together.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 cut -d: -f1 /etc/passwd
-```
-
-List usernames and their login shells (fields 1 and 7):
-
-```bash
 cut -d: -f1,7 /etc/passwd
 ```
 
-### Exercise 3.3 — Sort output
+</details>
 
-Extract the URL paths from the log and sort them alphabetically:
+### Exercise 3.3 — Translate and delete characters with `tr`
+
+`tr` reads from stdin only — it cannot accept a filename argument, so it is always used in a pipeline.
+
+1. Extract the HTTP methods from the log and convert them all to lowercase.
+2. Extract the URL paths from the log and strip all `/` characters from them using `tr -d`.
+3. `tr -s` squeezes runs of a repeated character down to one. Use it to collapse the extra spaces in this string: `echo "too    many   spaces"`.
+
+<details>
+<summary>Reveal Solution</summary>
+
+```bash
+cut -d' ' -f2 access.log | tr 'A-Z' 'a-z'
+cut -d' ' -f3 access.log | tr -d '/'
+echo "too    many   spaces" | tr -s ' '
+```
+
+Expected output for step 2 (first few lines):
+```
+index.html
+about.html
+login
+missing.html
+index.html
+```
+
+</details>
+
+### Exercise 3.4 — Sort output
+
+1. Extract the URL paths from the log and sort them alphabetically.
+2. Extract the status codes and sort them numerically, so that `200` sorts before `404` rather than after it.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 cut -d' ' -f3 access.log | sort
-```
-
-Sort the status codes numerically (so `200` sorts before `404`, not after it):
-
-```bash
 cut -d' ' -f4 access.log | sort -n
 ```
 
-### Exercise 3.4 — Remove duplicates with `uniq`
+</details>
 
-`uniq` removes adjacent duplicate lines, so the input must be sorted first.
+### Exercise 3.5 — Remove duplicates with `uniq`
 
-Get the unique paths visited:
+`uniq` only removes adjacent duplicates, so you must sort the input first.
+
+1. Get the unique paths visited in the log.
+2. Get the unique status codes, sorted numerically.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 cut -d' ' -f3 access.log | sort | uniq
-```
-
-Get the unique status codes that appear in the log:
-
-```bash
 cut -d' ' -f4 access.log | sort -n | uniq
 ```
 
-### Exercise 3.5 — Count occurrences with `uniq -c`
+</details>
 
-`uniq -c` prefixes each line with how many times it appeared consecutively.
+### Exercise 3.6 — Count occurrences with `uniq -c`
 
-Count how often each IP address appears:
+`uniq -c` prefixes each unique line with a count of how many times it appeared.
 
-```bash
-cut -d' ' -f1 access.log | sort | uniq -c
-```
+Count how often each IP address appears in the log, then sort the result largest-first to find the most active client.
 
-Sort the result largest-first to find the most active client:
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 cut -d' ' -f1 access.log | sort | uniq -c | sort -rn
 ```
 
-<details>
-<summary>Expected output</summary>
-
+Expected output:
 ```
       5 192.168.1.10
       4 172.16.0.3
@@ -379,9 +392,9 @@ This is the **frequency count pattern**: `sort | uniq -c | sort -rn`. It works f
 
 </details>
 
-### Exercise 3.6 — Challenge: count HTTP methods
+### Exercise 3.7 — Challenge: count HTTP methods
 
-Use `cut`, `sort`, and `uniq -c` to count how many times each HTTP method appears in the log.
+Use `cut`, `sort`, and `uniq -c` to count how many times each HTTP method (GET, POST, PUT, DELETE) appears in the log, ranked most-frequent first.
 
 <details>
 <summary>Reveal Solution</summary>
@@ -433,57 +446,53 @@ The command `g/404/p` is **g**lobally search for a regular expression and **p**r
 
 ### Exercise 5.1 — Basic substitution
 
-Replace `GET` with `[GET]` in the log output. The file is not changed — `sed` writes to stdout:
+1. Use `sed` to replace `GET` with `[GET]` throughout the log output. Confirm the file itself is unchanged by checking the first three lines with `head`.
+2. Note that `sed` only replaces the first match per line by default. Try adding the `g` flag to your substitution to replace every occurrence on each line.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 sed 's/GET/[GET]/' access.log
-```
-
-By default, only the first match per line is replaced. Add the `g` (global) flag to replace every occurrence:
-
-```bash
 sed 's/GET/[GET]/g' access.log
+head -3 access.log    # file unchanged
 ```
 
-Check that the file is unchanged:
-
-```bash
-head -3 access.log
-```
+</details>
 
 ### Exercise 5.2 — Use a different delimiter
 
-The `/` in `s/find/replace/` is just a convention — you can use any character. When the pattern or replacement contains slashes (common with file paths), this avoids messy escaping.
+The `/` in `s/find/replace/` is a convention, not a requirement. When your pattern or replacement contains slashes (as file paths do), switching the delimiter avoids messy escaping.
 
-Replace `/index.html` with `/home` using `|` as the delimiter:
+Replace `/index.html` with `/home`. Choose a delimiter other than `/`.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 sed 's|/index.html|/home|' access.log
 ```
 
+Any character can be used as the delimiter — `|`, `,`, `#`, etc.
+
+</details>
+
 ### Exercise 5.3 — Delete lines by pattern
 
-Print the log with all error responses (lines containing `40`) removed:
+1. Print the log with all lines containing `40` (error responses) removed.
+2. Remove the comment lines from `app.conf` (lines starting with `#`).
+3. Chain a second `sed` command to also remove the blank lines.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 sed '/40/d' access.log
-```
-
-Remove the comment lines from `app.conf` (lines starting with `#`):
-
-```bash
 sed '/^#/d' app.conf
-```
-
-Chain two `sed` commands to also remove the blank lines:
-
-```bash
 sed '/^#/d' app.conf | sed '/^$/d'
 ```
 
-<details>
-<summary>Expected output</summary>
-
+Expected output for step 3:
 ```
 db_host=localhost
 db_port=5432
@@ -501,60 +510,40 @@ max_connections=100
 
 ### Exercise 5.4 — Restrict to an address
 
-By default, `sed` applies its command to every line. An address restricts it to specific lines.
+By default `sed` applies its command to every line. An address restricts it.
 
-Apply a substitution only to lines 1 through 5:
+1. Apply a substitution (replace `GET` with `---`) only to lines 1 through 5.
+2. Apply a substitution only to lines matching the pattern `^db_host` — update that host to `db.internal`, leaving `cache_host` untouched.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 sed '1,5s/GET/---/' access.log
-```
-
-Apply a substitution only to lines that match a pattern — update only the `db_` host setting, not the `cache_host`:
-
-```bash
 sed '/^db_host/s/localhost/db.internal/' app.conf
 ```
 
-<details>
-<summary>Expected output (relevant lines)</summary>
-
-```
-db_host=db.internal
-```
-
-Only the `db_host` line changes. `cache_host=localhost` is untouched because it does not match the address `/^db_host/`.
+In step 2, only the `db_host` line changes. `cache_host=localhost` is untouched because it does not match the address `/^db_host/`.
 
 </details>
 
 ### Exercise 5.5 — Edit a file in place
 
-So far, `sed` has only written to stdout. Use `-i` to modify the file directly.
+Make a backup copy of `app.conf`, then use `sed -i` to change `log_level` from `info` to `warn` directly in the file. Verify the change took effect, and verify the backup is unchanged.
 
-First, make a backup:
+> **macOS note:** Use `sed -i '' 's/...' file` (empty string after `-i`) instead of just `-i`.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 cp app.conf app.conf.orig
-```
-
-Change `log_level` from `info` to `warn`:
-
-```bash
 sed -i 's/log_level=info/log_level=warn/' app.conf
-```
-
-Verify the change:
-
-```bash
 grep "log_level" app.conf
-```
-
-Verify the backup is unchanged:
-
-```bash
 grep "log_level" app.conf.orig
 ```
 
-> **macOS note:** On macOS, `-i` requires an extension argument. Use `sed -i '' 's/...' file` (empty string, no space) instead of just `-i`.
+</details>
 
 ---
 
@@ -562,69 +551,56 @@ grep "log_level" app.conf.orig
 
 ### Exercise 6.1 — Print specific fields
 
-`awk` splits each line into fields automatically. Whitespace is the default separator. Fields are `$1`, `$2`, etc. `$0` is the whole line; `$NF` is the last field.
+`awk` splits each line into fields automatically (whitespace-separated by default). Fields are `$1`, `$2`, etc.; `$0` is the whole line; `$NF` is the last field; `NR` is the current line number.
 
-Print just the IP address (field 1):
+1. Print just the IP address (field 1) from each line.
+2. Print the IP address and status code side by side.
+3. Print the line number, method, and path for each request.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 awk '{print $1}' access.log
-```
-
-Print the IP address and the status code side by side:
-
-```bash
 awk '{print $1, $4}' access.log
-```
-
-Print the line number, method, and path using the built-in `NR` variable:
-
-```bash
 awk '{print NR, $2, $3}' access.log
 ```
 
+</details>
+
 ### Exercise 6.2 — Use a custom field separator
 
-`awk -F` sets the field separator, much like `cut -d`.
+1. Use `awk -F:` to print usernames and home directories from `/etc/passwd` (fields 1 and 6).
+2. Use `=` as the separator to print just the setting name (the part before `=`) from each line of `app.conf`. Note that comment and blank lines will appear — you will filter them in the next exercise.
 
-Print usernames and home directories from `/etc/passwd` (fields 1 and 6):
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 awk -F: '{print $1, $6}' /etc/passwd
-```
-
-Print just the setting name (the part before `=`) from `app.conf`:
-
-```bash
 awk -F= '{print $1}' app.conf
 ```
 
-This includes comment and blank lines — you will filter those out in the next exercise.
+</details>
 
 ### Exercise 6.3 — Filter with a pattern
 
-The pattern in `awk` is evaluated for each line; the action only runs when it matches.
+The `awk` pattern is evaluated for each line; the action only runs when it matches.
 
-Print only the lines where the status code (field 4) is exactly `404`:
+1. Print only the lines where the status code (field 4) is exactly `404`.
+2. Print the IP address and URL for every `POST` request.
+3. Print all requests where the response size (field 5) exceeds 1000 bytes, showing the status, size, and path.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 awk '$4 == 404' access.log
-```
-
-Print the IP and URL for every POST request:
-
-```bash
 awk '$2 == "POST" {print $1, $3}' access.log
-```
-
-Print all requests where the response size (field 5) is larger than 1000 bytes:
-
-```bash
 awk '$5 > 1000 {print $4, $5, $3}' access.log
 ```
 
-<details>
-<summary>Expected output</summary>
-
+Expected output for step 3:
 ```
 200 1823 /index.html
 200 1823 /index.html
@@ -641,21 +617,18 @@ awk '$5 > 1000 {print $4, $5, $3}' access.log
 
 ### Exercise 6.4 — Filter with a regex pattern
 
-Match lines where the IP begins with `192.168`:
+1. Print all lines from IPs in the `192.168.*` range using an `awk` regex pattern.
+2. Print the method, path, and status for every successful API request — where the path contains `/api/` and the status is below 400.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 awk '/^192\.168/' access.log
-```
-
-Print the method, path, and status for every successful API request (path contains `/api/`, status below 400):
-
-```bash
 awk '/\/api\// && $4 < 400 {print $2, $3, $4}' access.log
 ```
 
-<details>
-<summary>Expected output</summary>
-
+Expected output for step 2:
 ```
 GET /api/users 200
 POST /api/users 201
@@ -667,21 +640,18 @@ DELETE /api/users/7 204
 
 ### Exercise 6.5 — BEGIN and END blocks
 
-Add a header line before the output using `BEGIN`:
+1. Print a header line reading `IP Status` before the data, then print the IP and status for each request.
+2. Calculate and print the total bytes transferred across all requests.
+
+<details>
+<summary>Reveal Solution</summary>
 
 ```bash
 awk 'BEGIN {print "IP", "Status"} {print $1, $4}' access.log
-```
-
-Calculate the total bytes transferred across all requests using `END`:
-
-```bash
 awk '{total += $5} END {print "Total bytes:", total}' access.log
 ```
 
-<details>
-<summary>Expected output</summary>
-
+Expected output for step 2:
 ```
 Total bytes: 24332
 ```
@@ -690,9 +660,9 @@ Total bytes: 24332
 
 ### Exercise 6.6 — Challenge: total bytes per IP address
 
-Use `awk` to calculate the total response bytes sent to each IP address. Print the results sorted largest-first.
+Use `awk` to calculate the total response bytes sent to each IP address, then print the results sorted largest-first.
 
-This requires an associative array (a variable indexed by a string) to accumulate bytes for each IP, then a loop in the `END` block to print the results.
+You will need an associative array to accumulate the bytes for each IP, and a loop in the `END` block to print the results.
 
 <details>
 <summary>Reveal Solution</summary>
@@ -711,7 +681,7 @@ Expected output:
 1823 192.168.1.20
 ```
 
-`bytes[$1]` is an associative array keyed on the IP address. `+= $5` adds the response size to the running total for that IP. The `END` block iterates over all keys with a `for` loop and prints each total.
+`bytes[$1]` is an associative array keyed on the IP address. `+= $5` adds each response size to the running total. The `END` block then iterates over all keys with a `for` loop.
 
 </details>
 
