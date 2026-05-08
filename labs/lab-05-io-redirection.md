@@ -288,7 +288,60 @@ Expected output:
 
 ---
 
-## Part 4: Process Substitution
+## Part 4: Command Substitution
+
+Command substitution — `$(command)` — runs a command and inserts its stdout as text wherever you use it: inside strings, as arguments, or on the right-hand side of a variable assignment.
+
+### Exercise 4.1 — Embed command output in a string
+
+1. Use `$(whoami)` and `$(hostname)` inside a single `echo` command to print a message such as `Logged in as alice on webserver-01`.
+2. Use `$(date +%A)` to print something like `Today is Friday`.
+
+<details>
+<summary>Reveal Solution</summary>
+
+```bash
+echo "Logged in as $(whoami) on $(hostname)"
+echo "Today is $(date +%A)"
+```
+
+</details>
+
+### Exercise 4.2 — Capture output into a variable
+
+1. Capture the number of lines in `access.log` into a variable called `count`, using `wc -l` inside `$()`. Then print a sentence such as `The log has 20 entries.`
+2. Capture the output of `date +%Y-%m-%d` into a variable called `today`. Use it to print `Report date: 2025-05-08`.
+
+<details>
+<summary>Reveal Solution</summary>
+
+```bash
+count=$(wc -l < access.log)
+echo "The log has $count entries."
+
+today=$(date +%Y-%m-%d)
+echo "Report date: $today"
+```
+
+</details>
+
+### Exercise 4.3 — Build a dynamic filename
+
+Use command substitution with `date +%Y%m%d` to create a timestamped backup copy of `access.log` — for example `access-20250508.log`. Verify the file was created.
+
+<details>
+<summary>Reveal Solution</summary>
+
+```bash
+cp access.log "access-$(date +%Y%m%d).log"
+ls access-*.log
+```
+
+</details>
+
+---
+
+## Part 5: Process Substitution
 
 ### Exercise 4.1 — Compare without temporary files
 
@@ -400,7 +453,7 @@ Expected contents of `unique-ips.txt`:
 
 ---
 
-## Part 5: `xargs`
+## Part 6: `xargs`
 
 ### Exercise 5.1 — Why `xargs`?
 
@@ -540,7 +593,7 @@ With `-P 4` all four jobs start at once. The total time drops from ~2 seconds to
 
 ---
 
-## Part 6: Clean Up
+## Part 7: Clean Up
 
 Restore the permissions on `searchdir/private` before deleting (you cannot remove a directory you cannot read):
 
